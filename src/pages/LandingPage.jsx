@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
+import { TextEffect } from "../components/core/text-effect";
 import {
   Code2,
   FileText,
@@ -489,11 +490,13 @@ function Hero() {
       />
 
       <div className="relative max-w-6xl mx-auto px-6 pt-10">
-        <motion.h1
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          className="text-center mx-auto"
+        <TextEffect
+          per="word"
+          as="h1"
+          preset="blur"
+          delay={0.05}
+          speedReveal={1.3}
+          className="text-center mx-auto block"
           style={{
             fontFamily: fontDisplay,
             fontSize: "clamp(2rem, 5vw, 3.6rem)",
@@ -502,16 +505,16 @@ function Hero() {
             lineHeight: 1.05,
             letterSpacing: "-0.02em",
             maxWidth: 780,
+            marginLeft: "auto",
+            marginRight: "auto",
           }}
         >
-          Can you believe your resume
-          <br />
-          is already telling recruiters this?
-        </motion.h1>
+          Can you believe your resume is already telling recruiters this?
+        </TextEffect>
         <motion.p
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.1 }}
+          transition={{ duration: 0.7, delay: 0.6 }}
           className="text-center mx-auto mt-5"
           style={{ fontFamily: fontBody, fontSize: 15.5, color: C.textMuted, maxWidth: 480, lineHeight: 1.6 }}
         >
