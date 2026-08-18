@@ -8,6 +8,7 @@ import CodePortfolio from "./pages/CodePortfolio";
 import ProjectsPage from "./pages/ProjectsPage";
 import AiCareerCoach from "./pages/AiCareerCoach";
 import SkillRadar from "./pages/SkillRadar";
+import InterviewReadiness from "./pages/InterviewReadiness";
 import PlaceholderPage from "./pages/PlaceholderPage";
 
 function App() {
@@ -23,7 +24,7 @@ function App() {
           <Route path="projects" element={<ProjectsPage />} />
           <Route path="coach" element={<AiCareerCoach />} />
           <Route path="radar" element={<SkillRadar />} />
-          <Route path="readiness" element={<PlaceholderPage label="Interview Readiness" />} />
+          <Route path="readiness" element={<InterviewReadiness />} />
           <Route path="roadmap" element={<PlaceholderPage label="Learning Roadmap" />} />
           <Route path="recruiter" element={<PlaceholderPage label="Recruiter Preview" />} />
         </Route>
