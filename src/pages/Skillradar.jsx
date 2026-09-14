@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ResponsiveContainer, Tooltip } from "recharts";
 import { Radar as RadarIcon, Check, AlertTriangle, TrendingUp, TrendingDown, Info } from "lucide-react";
+import { useProfileData } from "../context/ProfileDataContext";
 
 /* ------------------------------------------------------------------ */
 /*  Design tokens — matched to the rest of the app                     */
@@ -271,6 +272,13 @@ function SummaryStats({ data }) {
 
 export default function SkillRadar() {
   const [compare, setCompare] = useState(false);
+  const { setSkillsData } = useProfileData();
+
+  useEffect(() => {
+    // this page is the source of truth for skill scores — sync on mount so
+    // Interview Readiness and Overview reflect it without needing a manual step
+    setSkillsData(SKILLS.map((s) => ({ category: s.category, score: s.score })));
+  }, []);
 
   const strengths = SKILLS.filter((s) => s.score >= 75).sort((a, b) => b.score - a.score);
   const weakAreas = SKILLS.filter((s) => s.score < 50).sort((a, b) => a.score - b.score);

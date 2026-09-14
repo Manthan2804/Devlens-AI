@@ -1,5 +1,7 @@
 import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import {
   Eye,
   EyeOff,
@@ -302,6 +304,9 @@ function BrandingPanel({ mode }) {
 /* ------------------------------------------------------------------ */
 
 function LoginForm({ switchMode }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
   const [values, setValues] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -321,6 +326,9 @@ function LoginForm({ switchMode }) {
     setTimeout(() => {
       setLoading(false);
       setDone(true);
+      login({ name: "Priya Sharma", email: values.email });
+      const redirectTo = location.state?.from?.pathname || "/dashboard";
+      setTimeout(() => navigate(redirectTo, { replace: true }), 900);
     }, 1200);
   };
 
@@ -373,6 +381,9 @@ function LoginForm({ switchMode }) {
 /* ------------------------------------------------------------------ */
 
 function SignupForm({ switchMode }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
   const [values, setValues] = useState({ name: "", email: "", password: "", confirm: "" });
   const [role, setRole] = useState("student");
   const [agreed, setAgreed] = useState(false);
@@ -401,6 +412,9 @@ function SignupForm({ switchMode }) {
     setTimeout(() => {
       setLoading(false);
       setDone(true);
+      login({ name: values.name, email: values.email, role });
+      const redirectTo = location.state?.from?.pathname || "/dashboard";
+      setTimeout(() => navigate(redirectTo, { replace: true }), 1100);
     }, 1200);
   };
 
@@ -480,9 +494,9 @@ export default function AuthPages() {
       <BrandingPanel mode={mode} />
 
       <div className="flex flex-col justify-center px-6 sm:px-14 py-14 relative">
-        <a href="#" className="flex items-center gap-1.5 mb-10 lg:hidden" style={{ fontFamily: fontBody, fontSize: 13, color: C.textMuted }}>
+        <Link to="/" className="flex items-center gap-1.5 mb-10 lg:hidden" style={{ fontFamily: fontBody, fontSize: 13, color: C.textMuted }}>
           <ArrowLeft size={14} /> Back to home
-        </a>
+        </Link>
         <div className="flex items-center gap-2.5 mb-10 lg:hidden">
           <LogoMark />
           <span style={{ fontFamily: fontDisplay, color: C.text, fontWeight: 700, fontSize: 17 }}>
@@ -491,9 +505,9 @@ export default function AuthPages() {
         </div>
 
         <div className="w-full mx-auto" style={{ maxWidth: 380 }}>
-          <a href="#" className="hidden lg:flex items-center gap-1.5 mb-8" style={{ fontFamily: fontBody, fontSize: 13, color: C.textMuted }}>
+          <Link to="/" className="hidden lg:flex items-center gap-1.5 mb-8" style={{ fontFamily: fontBody, fontSize: 13, color: C.textMuted }}>
             <ArrowLeft size={14} /> Back to home
-          </a>
+          </Link>
 
           <div className="flex items-center gap-2 mb-2">
             <Sparkles size={14} style={{ color: C.amberDeep }} />

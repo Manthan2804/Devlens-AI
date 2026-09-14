@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useProfileData } from "../context/ProfileDataContext";
 import {
   FolderKanban,
+  GitBranch,
   ExternalLink,
   Sparkles,
   Check,
@@ -263,7 +265,7 @@ function EmptyState({ onImport }) {
           className="flex items-center gap-2 transition-transform duration-200 hover:scale-105"
           style={{ fontFamily: fontBody, fontSize: 13.5, fontWeight: 700, color: "#fff", background: C.ink, padding: "11px 20px", borderRadius: 99, opacity: loading ? 0.75 : 1 }}
         >
-          {loading ? <Loader2 size={15} className="animate-spin" /> : <FolderKanban size={15} />}
+          {loading ? <Loader2 size={15} className="animate-spin" /> : <GitBranch size={15} />}
           {loading ? "Importing…" : "Import from Code Portfolio"}
         </button>
         <button
@@ -362,7 +364,7 @@ function ProjectDetail({ project }) {
               className="flex items-center gap-1.5 transition-transform duration-200 hover:scale-105"
               style={{ fontFamily: fontBody, fontSize: 12, color: C.text, background: C.surface2, border: `1px solid ${C.border}`, padding: "7px 12px", borderRadius: 99 }}
             >
-              <FolderKanban size={13} /> Repo
+              <GitBranch size={13} /> Repo
             </a>
             {project.liveUrl && (
               <a
@@ -450,8 +452,16 @@ function PageHeader({ hasProjects, count, onReset }) {
 export default function ProjectsPage() {
   const [imported, setImported] = useState(false);
   const [selectedId, setSelectedId] = useState(MOCK_PROJECTS[0].id);
+  const { setProjectsData } = useProfileData();
 
   const selected = MOCK_PROJECTS.find((p) => p.id === selectedId) || MOCK_PROJECTS[0];
+
+  const handleImport = () => {
+    setImported(true);
+    setProjectsData(
+      MOCK_PROJECTS.map((p) => ({ id: p.id, name: p.name, score: p.score, deployed: p.status === "Deployed" }))
+    );
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -460,7 +470,7 @@ export default function ProjectsPage() {
       <AnimatePresence mode="wait">
         {!imported ? (
           <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <EmptyState onImport={() => setImported(true)} />
+            <EmptyState onImport={handleImport} />
           </motion.div>
         ) : (
           <motion.div key="data" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid lg:grid-cols-4 gap-5">

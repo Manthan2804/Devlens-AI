@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import { TextEffect } from "../components/core/text-effect";
 import {
   Code2,
@@ -170,6 +171,7 @@ function Nav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
   const links = ["Product", "How it works", "For recruiters", "Pricing"];
+  const navigate = useNavigate();
 
   return (
     <motion.div
@@ -198,6 +200,7 @@ function Nav() {
           whileHover={{ scale: 1.05 }}
           transition={{ type: "spring", stiffness: 300, damping: 15 }}
           className="flex items-center gap-2 md:absolute md:left-1/2 md:-translate-x-1/2 cursor-pointer"
+          onClick={() => navigate("/")}
         >
           <div className="nav-logo-glow rounded-full">
             <LogoMark light />
@@ -211,10 +214,16 @@ function Nav() {
           <button className="transition-transform duration-200 hover:scale-110" style={{ color: "rgba(255,255,255,0.7)" }}>
             <Search size={16} />
           </button>
-          <button className="transition-transform duration-200 hover:scale-110" style={{ color: "rgba(255,255,255,0.7)" }}>
+          <button
+            onClick={() => navigate("/auth")}
+            className="transition-transform duration-200 hover:scale-110"
+            style={{ color: "rgba(255,255,255,0.7)" }}
+            title="Sign in"
+          >
             <User size={16} />
           </button>
           <button
+            onClick={() => navigate("/auth")}
             className="transition-all duration-200 hover:scale-105 active:scale-95"
             style={{
               fontFamily: fontBody,
@@ -246,7 +255,12 @@ function Nav() {
               {links.map((l) => (
                 <a key={l} href="#" style={{ fontFamily: fontBody, color: "rgba(255,255,255,0.75)", fontSize: 15 }}>{l}</a>
               ))}
-              <button style={{ fontFamily: fontBody, background: C.amber, color: C.ink, fontSize: 14, fontWeight: 700, padding: "10px 18px", borderRadius: 99 }}>GET SCORE</button>
+              <button
+                onClick={() => navigate("/auth")}
+                style={{ fontFamily: fontBody, background: C.amber, color: C.ink, fontSize: 14, fontWeight: 700, padding: "10px 18px", borderRadius: 99 }}
+              >
+                GET SCORE
+              </button>
             </div>
           </motion.div>
         )}
@@ -451,6 +465,7 @@ function InteractiveObject() {
 }
 
 function Hero() {
+  const navigate = useNavigate();
   return (
     <div className="relative overflow-hidden" style={{ background: C.bg, paddingTop: 70, paddingBottom: 40 }}>
       {/* slow rotating soft sheen behind the headline */}
@@ -559,10 +574,18 @@ function Hero() {
           JUST UPLOAD YOUR RESUME — IT'S THAT EASY 🎯
         </p>
         <div className="flex flex-wrap items-center justify-center gap-4 mt-6">
-          <button style={{ fontFamily: fontBody, background: C.ink, color: "#fff", fontSize: 14.5, fontWeight: 700, padding: "13px 24px", borderRadius: 99 }} className="flex items-center gap-2">
+          <button
+            onClick={() => navigate("/auth")}
+            style={{ fontFamily: fontBody, background: C.ink, color: "#fff", fontSize: 14.5, fontWeight: 700, padding: "13px 24px", borderRadius: 99 }}
+            className="flex items-center gap-2 transition-transform duration-200 hover:scale-105"
+          >
             Analyze my profile <ArrowRight size={16} />
           </button>
-          <button style={{ fontFamily: fontBody, background: "transparent", color: C.text, fontSize: 14.5, fontWeight: 600, padding: "13px 22px", borderRadius: 99, border: `1.5px solid ${C.borderStrong}` }}>
+          <button
+            onClick={() => navigate("/dashboard")}
+            style={{ fontFamily: fontBody, background: "transparent", color: C.text, fontSize: 14.5, fontWeight: 600, padding: "13px 22px", borderRadius: 99, border: `1.5px solid ${C.borderStrong}` }}
+            className="transition-transform duration-200 hover:scale-105"
+          >
             See a sample report
           </button>
         </div>
@@ -761,6 +784,7 @@ function Audience() {
 /* ------------------------------------------------------------------ */
 
 function FinalCTA() {
+  const navigate = useNavigate();
   return (
     <div className="relative overflow-hidden py-28" style={{ background: C.ink }}>
       <div className="absolute rounded-full pointer-events-none" style={{ width: 700, height: 700, top: "-30%", left: "50%", transform: "translateX(-50%)", background: `radial-gradient(circle, ${C.amber}22, transparent 65%)`, filter: "blur(40px)" }} />
@@ -773,7 +797,11 @@ function FinalCTA() {
         <p style={{ fontFamily: fontBody, fontSize: 15.5, color: "rgba(255,255,255,0.6)", marginTop: 16 }}>
           Free to run. One score. Ten minutes of your time, maybe less.
         </p>
-        <button style={{ fontFamily: fontBody, background: C.amber, color: C.ink, fontSize: 15, fontWeight: 700, padding: "14px 26px", borderRadius: 99 }} className="mt-9 inline-flex items-center gap-2">
+        <button
+          onClick={() => navigate("/auth")}
+          style={{ fontFamily: fontBody, background: C.amber, color: C.ink, fontSize: 15, fontWeight: 700, padding: "14px 26px", borderRadius: 99 }}
+          className="mt-9 inline-flex items-center gap-2 transition-transform duration-200 hover:scale-105"
+        >
           Get my readiness score <ArrowRight size={17} />
         </button>
       </div>

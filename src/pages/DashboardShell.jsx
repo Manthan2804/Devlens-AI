@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
@@ -245,6 +246,22 @@ function Sidebar({ collapsed, setCollapsed, mobileOpen, setMobileOpen }) {
 function Topbar({ title, setMobileOpen, demoState, setDemoState }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+
+  const displayName = user?.name || "Priya Sharma";
+  const displayEmail = user?.email || "priya@devlens.ai";
+  const initials = displayName
+    .split(" ")
+    .map((p) => p[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
+  const handleSignOut = () => {
+    logout();
+    navigate("/");
+  };
 
   useEffect(() => {
     const onClick = (e) => { if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false); };
@@ -287,7 +304,7 @@ function Topbar({ title, setMobileOpen, demoState, setDemoState }) {
         <div className="relative" ref={menuRef}>
           <button className="flex items-center gap-2 transition-transform duration-200 hover:scale-105" onClick={() => setMenuOpen((o) => !o)}>
             <div className="rounded-full flex items-center justify-center" style={{ width: 32, height: 32, background: GRADIENT, boxShadow: "0 6px 16px -6px rgba(232,147,58,0.6)" }}>
-              <span style={{ fontFamily: fontDisplay, fontSize: 12.5, fontWeight: 700, color: "#fff" }}>PS</span>
+              <span style={{ fontFamily: fontDisplay, fontSize: 12.5, fontWeight: 700, color: "#fff" }}>{initials}</span>
             </div>
             <ChevronDown size={14} style={{ color: C.textMuted }} className="hidden sm:block" />
           </button>
@@ -302,16 +319,17 @@ function Topbar({ title, setMobileOpen, demoState, setDemoState }) {
                 style={{ width: 190, background: C.surface, border: `1px solid ${C.borderStrong}`, boxShadow: "0 24px 55px -20px rgba(20,18,14,0.3)" }}
               >
                 <div className="px-3.5 py-3" style={{ borderBottom: `1px solid ${C.border}` }}>
-                  <div style={{ fontFamily: fontBody, fontSize: 13, color: C.text, fontWeight: 600 }}>Priya Sharma</div>
-                  <div style={{ fontFamily: fontMono, fontSize: 11, color: C.textFaint }}>priya@devlens.ai</div>
+                  <div style={{ fontFamily: fontBody, fontSize: 13, color: C.text, fontWeight: 600 }}>{displayName}</div>
+                  <div style={{ fontFamily: fontMono, fontSize: 11, color: C.textFaint }}>{displayEmail}</div>
                 </div>
                 {[
-                  { icon: User, label: "Profile" },
-                  { icon: Settings, label: "Settings" },
-                  { icon: LogOut, label: "Sign out" },
+                  { icon: User, label: "Profile", onClick: () => setMenuOpen(false) },
+                  { icon: Settings, label: "Settings", onClick: () => setMenuOpen(false) },
+                  { icon: LogOut, label: "Sign out", onClick: handleSignOut },
                 ].map((it) => (
                   <button
                     key={it.label}
+                    onClick={it.onClick}
                     className="flex items-center gap-2.5 w-full px-3.5 py-2.5 transition-colors duration-150"
                     style={{ fontFamily: fontBody, fontSize: 13, color: C.textMuted }}
                     onMouseEnter={(e) => (e.currentTarget.style.background = C.surface2)}

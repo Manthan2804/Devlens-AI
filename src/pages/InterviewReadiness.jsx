@@ -13,6 +13,7 @@ import {
   ArrowUpRight,
   Target,
 } from "lucide-react";
+import { useProfileData } from "../context/ProfileDataContext";
 
 /* ------------------------------------------------------------------ */
 /*  Design tokens — matched to the rest of the app                     */
@@ -53,13 +54,13 @@ const TIERS = [
   { name: "Top Candidate", min: 83 },
 ];
 
-const FACTORS = [
+const FACTOR_META = [
   {
     id: "resume",
     label: "Resume",
     icon: FileText,
     weight: 20,
-    score: 88,
+    fallbackScore: 88,
     summary: "ATS-compatible, strong action verbs, one weak section.",
     detail: "Your resume scores well on formatting and ATS parseability. The main drag is 2 bullet points still missing measurable impact — fixing those would push this factor above 90.",
   },
@@ -68,7 +69,7 @@ const FACTORS = [
     label: "GitHub",
     icon: Code2,
     weight: 20,
-    score: 75,
+    fallbackScore: 75,
     summary: "Consistent activity, but 2 of 3 top repos lack a README.",
     detail: "Commit history shows real, sustained work — that's the strongest signal here. Missing READMEs on your secondary projects are the single biggest thing holding this score back.",
   },
@@ -77,7 +78,7 @@ const FACTORS = [
     label: "Projects",
     icon: FolderKanban,
     weight: 20,
-    score: 72,
+    fallbackScore: 72,
     summary: "Strong flagship project, two others need deployment.",
     detail: "DevLens AI itself is a strong signal — deployed, documented, tested. Task Flow and ML Notebooks are dragging the average down since neither is deployed or fully documented.",
   },
@@ -86,7 +87,7 @@ const FACTORS = [
     label: "Technical Skills",
     icon: RadarIcon,
     weight: 15,
-    score: 78,
+    fallbackScore: 78,
     summary: "Strong frontend and version control, weak on DevOps/Cloud.",
     detail: "Your skill radar shows real strength in frontend work and Git discipline. Cloud and DevOps are your two lowest categories — closing those gaps has the highest leverage on this score.",
   },
@@ -95,7 +96,7 @@ const FACTORS = [
     label: "Portfolio Completeness",
     icon: Layers,
     weight: 10,
-    score: 65,
+    fallbackScore: 65,
     summary: "Missing certifications and a recruiter-facing summary.",
     detail: "You have the raw material — projects, skills, activity — but no single place ties it together yet. A completed Recruiter Preview page would meaningfully lift this.",
   },
@@ -104,7 +105,7 @@ const FACTORS = [
     label: "Activity",
     icon: Activity,
     weight: 10,
-    score: 70,
+    fallbackScore: 70,
     summary: "Regular commits, with a few multi-week gaps.",
     detail: "Your contribution graph shows healthy activity most weeks, but a few multi-week gaps stand out. Recruiters read consistency almost as much as volume.",
   },
@@ -113,11 +114,24 @@ const FACTORS = [
     label: "Documentation",
     icon: BookOpen,
     weight: 5,
-    score: 60,
+    fallbackScore: 60,
     summary: "Flagship project well-documented, others are not.",
     detail: "Smallest weight, but an easy win — writing a README for your two undocumented repos would take under an hour and close this gap almost entirely.",
   },
 ];
+
+// Overlays real scores from the shared profile data onto the static factor
+// descriptions — resume/github/projects/skills come from whatever the user
+// has actually run; the rest fall back to a reasonable default score.
+function buildFactors(profileData) {
+  const liveScores = {
+    resume: profileData.resume.scores.resume,
+    github: profileData.github.scores.github,
+    projects: profileData.projectAvg,
+    skills: profileData.skillAvg,
+  };
+  return FACTOR_META.map((f) => ({ ...f, score: liveScores[f.id] ?? f.fallbackScore }));
+}
 
 function computeScore(factors) {
   const weighted = factors.reduce((sum, f) => sum + (f.weight * f.score) / 100, 0);
@@ -386,7 +400,9 @@ function ActionPlan({ nextTierName }) {
 /* ------------------------------------------------------------------ */
 
 export default function InterviewReadiness() {
-  const score = computeScore(FACTORS);
+  const profileData = useProfileData();
+  const factors = buildFactors(profileData);
+  const score = computeScore(factors);
   const tier = getTier(score);
   const tierIdx = TIERS.findIndex((t) => t.name === tier.name);
   const nextTier = TIERS[tierIdx + 1];
@@ -405,7 +421,7 @@ export default function InterviewReadiness() {
 
       <div className="grid lg:grid-cols-3 gap-5">
         <div className="lg:col-span-2">
-          <FactorBreakdown factors={FACTORS} />
+          <FactorBreakdown factors={factors} />
         </div>
         <ActionPlan nextTierName={nextTier?.name} />
       </div>

@@ -1,11 +1,13 @@
 import React, { useState, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useProfileData } from "../context/ProfileDataContext";
 import {
   Upload,
   FileText,
   Mail,
   Phone,
   MapPin,
+  Link,
   RefreshCw,
   Download,
   AlertTriangle,
@@ -114,7 +116,6 @@ function Badge({ children, tone = "amber" }) {
     red: { bg: "rgba(201,74,63,0.14)", fg: C.red },
     faint: { bg: C.surface2, fg: C.textMuted },
   };
-
   const t = map[tone];
   return (
     <span style={{ fontFamily: fontMono, fontSize: 10.5, letterSpacing: 0.4, color: t.fg, background: t.bg, padding: "3px 9px", borderRadius: 99 }}>
@@ -279,7 +280,7 @@ function ProfileCard({ profile }) {
           { icon: Mail, val: profile.email },
           { icon: Phone, val: profile.phone },
           { icon: MapPin, val: profile.location },
-          { icon: Briefcase, val: profile.linkedin },
+          { icon: Link, val: profile.linkedin },
         ].map((it) => (
           <div key={it.val} className="flex items-center gap-1.5">
             <it.icon size={12} style={{ color: C.textFaint }} />
@@ -510,6 +511,7 @@ function PageHeader({ stage, fileName, onReplace }) {
 export default function ResumeAnalyzer() {
   const [stage, setStage] = useState("empty"); // empty | analyzing | data | error
   const [fileName, setFileName] = useState("");
+  const { setResumeData } = useProfileData();
 
   const handleFile = useCallback((file) => {
     if (file.type !== "application/pdf") {
@@ -519,8 +521,18 @@ export default function ResumeAnalyzer() {
     }
     setFileName(file.name);
     setStage("analyzing");
-    setTimeout(() => setStage("data"), 2800);
-  }, []);
+    setTimeout(() => {
+      setStage("data");
+      // push this run's results into the shared profile data so Overview,
+      // Interview Readiness, and Recruiter Preview all reflect it too
+      setResumeData({
+        fileName: file.name,
+        scores: MOCK.scores,
+        missingSkills: MOCK.missingSkills,
+        strongBullets: MOCK.bullets.filter((b) => b.issue === "strong").map((b) => b.original),
+      });
+    }, 2800);
+  }, [setResumeData]);
 
   return (
     <div className="flex flex-col gap-6">

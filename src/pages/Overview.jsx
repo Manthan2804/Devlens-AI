@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { Upload, Link2, AlertTriangle, RefreshCw, Sparkles, ArrowRight } from "lucide-react";
+import { useProfileData } from "../context/ProfileDataContext";
 
 const C = {
   bg: "#f4efe3",
@@ -164,12 +165,13 @@ function InsightRow({ tone, title, desc, state }) {
 
 export default function Overview() {
   const { demoState } = useOutletContext();
+  const { resume, github, skills, readinessScore } = useProfileData();
 
   const scores = [
-    { label: "Resume", value: 82, accent: C.amber },
-    { label: "GitHub", value: 71, accent: C.rose },
-    { label: "ATS", value: 88, accent: C.emerald },
-    { label: "Portfolio", value: 65, accent: C.amber },
+    { label: "Resume", value: resume.scores.resume, accent: C.amber },
+    { label: "GitHub", value: github.scores.github, accent: C.rose },
+    { label: "ATS", value: resume.scores.ats, accent: C.emerald },
+    { label: "Portfolio", value: github.scores.readme, accent: C.amber },
   ];
   const insights = [
     { tone: "amber", title: "Add a README to 3 top repos", desc: "Repos without a README score lower on portfolio quality." },
@@ -223,12 +225,12 @@ export default function Overview() {
               </div>
               <div className="flex items-center gap-6 flex-wrap">
                 <div>
-                  <span style={{ fontFamily: fontDisplay, fontSize: 44, fontWeight: 700, color: C.text }}>76</span>
+                  <span style={{ fontFamily: fontDisplay, fontSize: 44, fontWeight: 700, color: C.text }}>{readinessScore}</span>
                   <span style={{ fontFamily: fontBody, fontSize: 14, color: C.textMuted }}>/100</span>
                 </div>
                 <div className="flex-1 min-w-[180px]">
                   <div className="h-2 rounded-full overflow-hidden" style={{ background: C.surface2 }}>
-                    <div style={{ height: "100%", width: "76%", background: GRADIENT }} />
+                    <div style={{ height: "100%", width: `${readinessScore}%`, background: GRADIENT }} />
                   </div>
                   <p style={{ fontFamily: fontBody, fontSize: 12, color: C.textFaint, marginTop: 8 }}>
                     Stronger than 68% of profiles at your experience level
